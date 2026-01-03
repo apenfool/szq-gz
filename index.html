@@ -1,0 +1,1397 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      http-equiv="Cache-Control"
+      content="no-cache, no-store, must-revalidate"
+    />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+    <title>水知晴体育国职模拟考试系统</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/animations.css" />
+  </head>
+  <body>
+    <div id="app">
+      <!-- 登录页面 -->
+      <div id="loginPage" class="page active">
+        <div class="login-container">
+          <div class="login-background">
+            <div class="wave wave1"></div>
+            <div class="wave wave2"></div>
+            <div class="wave wave3"></div>
+          </div>
+          <div class="login-content">
+            <div class="site-header">
+              <img
+                src="image/logo.png"
+                alt="Logo"
+                class="site-logo"
+                id="loginLogo"
+              />
+              <h1 id="siteTitle">水知晴体育国职模拟考试系统</h1>
+            </div>
+            <div class="info-section">
+              <h3>国职考试资讯</h3>
+              <div id="examInfo" class="exam-info-box">
+                <p>考试类型：国职游泳救生员（初级/中级/高级）</p>
+                <p>考试时间：每月第二周周六</p>
+                <p>考试地点：各省市体育职业鉴定站</p>
+                <p>招聘岗位：救生员、游泳教练员</p>
+              </div>
+            </div>
+            <div class="login-tabs">
+              <button class="tab-btn active" data-tab="user">用户登录</button>
+              <button class="tab-btn" data-tab="trial">试用登录</button>
+              <button class="tab-btn" data-tab="admin">管理员</button>
+            </div>
+            <div class="login-hint-banner" id="loginHintBanner">
+              <i class="fa fa-hand-o-down"></i>
+              <span>登录成功后往下滚动选择考试或练习</span>
+            </div>
+            <div class="login-forms">
+              <form id="userLoginForm" class="login-form active">
+                <div class="form-group">
+                  <input
+                    type="text"
+                    id="userName"
+                    placeholder="姓名"
+                    required
+                  />
+                  <i class="fa fa-user"></i>
+                </div>
+                <div class="form-group">
+                  <input
+                    type="tel"
+                    id="userPhone"
+                    placeholder="手机号（作为用户ID）"
+                    required
+                    pattern="[0-9]{11}"
+                  />
+                  <i class="fa fa-phone"></i>
+                </div>
+                <div class="form-group">
+                  <input
+                    type="text"
+                    id="activationCode"
+                    placeholder="激活码"
+                    required
+                  />
+                  <i class="fa fa-key"></i>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">
+                  <span>登 录</span>
+                  <i class="fa fa-arrow-right"></i>
+                </button>
+                <p class="login-hint">激活码请找管理索要</p>
+              </form>
+              <form id="trialLoginForm" class="login-form">
+                <button type="submit" class="btn btn-success btn-block btn-lg">
+                  <i class="fa fa-play-circle"></i>
+                  <span>试用登录（20道题，30分钟）</span>
+                </button>
+                <p class="login-hint">试用无历史记录、无收藏功能</p>
+              </form>
+              <form id="adminLoginForm" class="login-form">
+                <div class="form-group">
+                  <input
+                    type="password"
+                    id="adminPassword"
+                    placeholder="管理密码"
+                    required
+                  />
+                  <i class="fa fa-lock"></i>
+                </div>
+                <button type="submit" class="btn btn-warning btn-block">
+                  <i class="fa fa-cog"></i>
+                  <span>进入管理端</span>
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 登录确认弹窗 -->
+      <div id="loginConfirmModal" class="modal">
+        <div class="modal-content modal-sm">
+          <div class="modal-header">
+            <h3><i class="fa fa-info-circle"></i> 登录成功</h3>
+          </div>
+          <div class="modal-body">
+            <div class="login-success-content">
+              <div class="success-icon">
+                <i class="fa fa-check-circle"></i>
+              </div>
+              <p id="loginSuccessMessage">登录成功！</p>
+              <p class="login-modal-hint">请向下滚动页面开始刷题</p>
+              <div class="scroll-indicator">
+                <i class="fa fa-chevron-down"></i>
+                <span>向下滚动 ↓</span>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button
+              class="btn btn-primary btn-block"
+              onclick="App.confirmLogin()"
+            >
+              <i class="fa fa-arrow-down"></i> 开始刷题
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 主页面 -->
+      <div id="mainPage" class="page">
+        <header class="main-header">
+          <img
+            src="image/logo.png"
+            alt="Logo"
+            class="header-logo"
+            id="mainLogo"
+          />
+          <h2 id="mainSiteTitle">水知晴体育国职模拟考试系统</h2>
+          <div class="header-right">
+            <span id="syncStatusIndicator" class="sync-status online">
+              <i class="fa fa-globe"></i> 在线
+            </span>
+            <span id="userDisplay"></span>
+            <button id="logoutBtn" class="btn btn-sm btn-outline">
+              <i class="fa fa-sign-out"></i> 退出
+            </button>
+          </div>
+        </header>
+        <div
+          class="login-success-hint"
+          id="loginSuccessHint"
+          style="display: none"
+        >
+          <i class="fa fa-check-circle"></i>
+          <span id="loginSuccessText">登录成功</span>
+        </div>
+        <div class="progress-banner" id="progressBanner" style="display: none">
+          <div class="progress-info">
+            <i class="fa fa-save"></i>
+            <span>您有未保存的答题进度</span>
+          </div>
+          <div class="progress-actions">
+            <button class="btn btn-sm btn-primary" id="continueProgressBtn">
+              继续
+            </button>
+            <button class="btn btn-sm btn-outline" id="discardProgressBtn">
+              放弃
+            </button>
+          </div>
+        </div>
+        <div
+          class="progress-records"
+          id="progressRecords"
+          style="display: none"
+        >
+          <div class="records-header">
+            <i class="fa fa-history"></i>
+            <span>答题进度记录</span>
+            <button
+              class="btn btn-sm btn-outline"
+              onclick="App.clearAllProgress()"
+            >
+              <i class="fa fa-trash"></i> 清空
+            </button>
+          </div>
+          <div class="records-list" id="recordsList"></div>
+        </div>
+        <main class="main-content">
+          <div class="menu-grid">
+            <div class="menu-card" data-action="exam">
+              <div class="card-icon">
+                <i class="fa fa-clock-o"></i>
+              </div>
+              <h3>模拟考试</h3>
+              <p>100道题 · 90分钟</p>
+              <span class="card-tag">随机抽题</span>
+            </div>
+            <div class="menu-card" data-action="practice">
+              <div class="card-icon">
+                <i class="fa fa-book"></i>
+              </div>
+              <h3>刷题练习</h3>
+              <p>全题库 · 顺序/随机</p>
+              <span class="card-tag">巩固知识</span>
+            </div>
+            <div class="menu-card" data-action="wrong">
+              <div class="card-icon">
+                <i class="fa fa-times-circle"></i>
+              </div>
+              <h3>错题集</h3>
+              <p id="wrongCount">0题待巩固</p>
+            </div>
+            <div class="menu-card" data-action="favorites">
+              <div class="card-icon">
+                <i class="fa fa-star"></i>
+              </div>
+              <h3>收藏题库</h3>
+              <p id="favoriteCount">0题已收藏</p>
+            </div>
+            <div class="menu-card" data-action="history">
+              <div class="card-icon">
+                <i class="fa fa-history"></i>
+              </div>
+              <h3>历史记录</h3>
+              <p id="historyCount">0次记录</p>
+            </div>
+          </div>
+        </main>
+      </div>
+
+      <!-- 选择考试类型页面 -->
+      <div id="examTypePage" class="page">
+        <header class="page-header">
+          <button class="btn btn-back" onclick="goBack()">
+            <i class="fa fa-arrow-left"></i> 返回
+          </button>
+          <h2 id="examTypeTitle">模拟考试</h2>
+        </header>
+        <div class="content-wrapper">
+          <div class="category-selection" id="categorySelection">
+            <h3>选择题库类别</h3>
+            <div class="category-list">
+              <div class="category-item" id="categoryJiuShengYuan">
+                <div
+                  class="category-card available"
+                  onclick="App.toggleLevels('救生员', 'categoryJiuShengYuan')"
+                >
+                  <div class="category-icon-wrap">
+                    <i class="fa fa-life-ring category-icon"></i>
+                  </div>
+                  <div class="category-info">
+                    <span class="category-title">国职游泳救生员</span>
+                    <span class="category-status">可使用</span>
+                  </div>
+                </div>
+                <div class="level-drawer" id="levelDrawerJiuShengYuan">
+                  <div class="level-drawer-inner">
+                    <div
+                      class="level-chip available"
+                      onclick="App.selectCategory('救生员', '初级')"
+                    >
+                      <span class="level-chip-name">初级</span>
+                      <i class="fa fa-check level-chip-icon"></i>
+                    </div>
+                    <div
+                      class="level-chip disabled"
+                      onclick="App.showConstructionAlert('国职游泳救生员中级')"
+                    >
+                      <span class="level-chip-name">中级</span>
+                      <i class="fa fa-lock level-chip-icon"></i>
+                    </div>
+                    <div
+                      class="level-chip disabled"
+                      onclick="App.showConstructionAlert('国职游泳救生员高级')"
+                    >
+                      <span class="level-chip-name">高级</span>
+                      <i class="fa fa-lock level-chip-icon"></i>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="category-item" id="categoryZhiDaoYuan">
+                <div
+                  class="category-card disabled"
+                  onclick="App.showConstructionAlert('国职游泳指导员')"
+                >
+                  <div class="category-icon-wrap">
+                    <i class="fa fa-user category-icon"></i>
+                  </div>
+                  <div class="category-info">
+                    <span class="category-title">国职游泳指导员</span>
+                    <span class="category-status disabled">建设中</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="exam-settings" id="examSettings" style="display: none">
+            <div class="info-banner" id="examInfoBanner">
+              <i class="fa fa-info-circle"></i>
+              <span
+                >模拟考试为随机100道题，时间90分钟，考完后展示答案和解析</span
+              >
+            </div>
+            <div class="selection-container">
+              <div class="selection-group">
+                <h3>题型选择</h3>
+                <div class="checkbox-group">
+                  <label class="checkbox-item">
+                    <input type="checkbox" id="includeJudgment" checked />
+                    <span class="checkmark"></span>
+                    <span class="label-text">判断题</span>
+                  </label>
+                  <label class="checkbox-item">
+                    <input type="checkbox" id="includeChoice" checked />
+                    <span class="checkmark"></span>
+                    <span class="label-text">单选题</span>
+                  </label>
+                </div>
+              </div>
+              <div
+                class="selection-group"
+                id="practiceModeGroup"
+                style="display: none"
+              >
+                <h3>练习模式</h3>
+                <div class="radio-group">
+                  <label class="radio-item">
+                    <input
+                      type="radio"
+                      name="practiceMode"
+                      value="order"
+                      checked
+                    />
+                    <span class="radio-mark"></span>
+                    <span class="label-text">顺序练习</span>
+                  </label>
+                  <label class="radio-item">
+                    <input type="radio" name="practiceMode" value="random" />
+                    <span class="radio-mark"></span>
+                    <span class="label-text">随机练习</span>
+                  </label>
+                </div>
+              </div>
+              <div class="action-buttons" id="examActionButtons">
+                <button
+                  class="btn btn-primary btn-lg btn-block"
+                  id="startExamBtn"
+                  onclick="App.startExam(true)"
+                >
+                  <i class="fa fa-play"></i> 开始考试
+                </button>
+              </div>
+              <div
+                class="action-buttons"
+                id="practiceActionButtons"
+                style="display: none"
+              >
+                <button
+                  class="btn btn-success btn-lg btn-block"
+                  id="startPracticeBtn"
+                  onclick="App.startExam(false)"
+                >
+                  <i class="fa fa-book"></i> 开始刷题
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 答题页面 -->
+      <div id="answerPage" class="page">
+        <header class="answer-header">
+          <div class="answer-info">
+            <button
+              class="btn btn-icon"
+              id="returnBtn"
+              title="返回"
+              style="display: none"
+              onclick="App.returnToSource()"
+            >
+              <i class="fa fa-arrow-left"></i>
+            </button>
+            <span id="questionProgress">1/100</span>
+            <span id="timeDisplay" class="time-badge">
+              <i class="fa fa-clock-o"></i>
+              <span id="remainingTime">90:00</span>
+            </span>
+          </div>
+          <div class="answer-actions">
+            <button class="btn btn-icon" id="collectBtn" title="收藏">
+              <i class="fa fa-star-o"></i>
+            </button>
+            <button class="btn btn-icon" id="markBtn" title="标记">
+              <i class="fa fa-flag-o"></i>
+            </button>
+            <span class="thinking-time">
+              <span>思考时间：<span id="thinkingTimer">00:00</span></span>
+            </span>
+          </div>
+        </header>
+        <main class="question-area">
+          <div class="question-header">
+            <span id="questionType" class="type-badge">判断题</span>
+            <span id="questionCategory" class="category-tag">基础常识</span>
+          </div>
+          <div class="question-content">
+            <p id="questionText"></p>
+          </div>
+          <div class="options-list" id="optionsList"></div>
+          <div
+            class="answer-feedback"
+            id="answerFeedback"
+            style="display: none"
+          >
+            <div class="correct-answer">
+              <i class="fa fa-check-circle"></i>
+              <span>正确答案：<span id="correctAnswer"></span></span>
+            </div>
+            <div class="analysis-content">
+              <h4>解析：</h4>
+              <p id="analysisText"></p>
+            </div>
+          </div>
+        </main>
+        <div class="question-nav" id="questionNav">
+          <button class="nav-toggle" id="navToggle">
+            <i class="fa fa-list"></i>
+          </button>
+          <div class="nav-panel" id="navPanel">
+            <div class="nav-header">
+              <span>答题卡</span>
+              <span id="answeredCount">已答: 0</span>
+            </div>
+            <div class="nav-grid" id="navGrid"></div>
+            <div class="nav-legend">
+              <span class="legend-item"
+                ><span class="dot correct"></span>正确</span
+              >
+              <span class="legend-item"
+                ><span class="dot wrong"></span>错误</span
+              >
+              <span class="legend-item"
+                ><span class="dot current"></span>当前</span
+              >
+              <span class="legend-item"
+                ><span class="dot marked"></span>标记</span
+              >
+              <span class="legend-item"
+                ><span class="dot collected"></span>收藏</span
+              >
+            </div>
+          </div>
+        </div>
+        <footer class="answer-footer">
+          <button class="btn btn-outline" id="prevQuestion">
+            <i class="fa fa-chevron-left"></i> 上一题
+          </button>
+          <button
+            class="btn btn-outline"
+            id="skipQuestion"
+            style="display: none"
+          >
+            跳过
+          </button>
+          <button class="btn btn-primary" id="nextQuestion">
+            下一题 <i class="fa fa-chevron-right"></i>
+          </button>
+        </footer>
+        <div class="submit-area" id="submitArea" style="display: none">
+          <button class="btn btn-warning" id="saveProgress">
+            <i class="fa fa-save"></i> 保存进度
+          </button>
+          <button class="btn btn-primary" id="submitExam">
+            <i class="fa fa-check"></i> 交卷
+          </button>
+        </div>
+      </div>
+
+      <!-- 成绩单页面 -->
+      <div id="resultPage" class="page">
+        <header class="page-header">
+          <button class="btn btn-back" onclick="goBack()">
+            <i class="fa fa-arrow-left"></i> 返回
+          </button>
+          <h2>考试成绩</h2>
+        </header>
+        <div class="result-container">
+          <div class="score-card">
+            <div class="score-main">
+              <div class="score-circle">
+                <svg viewBox="0 0 100 100">
+                  <circle class="score-bg" cx="50" cy="50" r="45"></circle>
+                  <circle
+                    class="score-progress"
+                    cx="50"
+                    cy="50"
+                    r="45"
+                    id="scoreCircle"
+                  ></circle>
+                </svg>
+                <div class="score-text">
+                  <span class="score-value" id="finalScore">0</span>
+                  <span class="score-unit">分</span>
+                </div>
+              </div>
+              <p class="score-status" id="scoreStatus">及格</p>
+            </div>
+            <div class="score-details">
+              <div class="detail-item">
+                <span class="detail-label">总题数</span>
+                <span class="detail-value" id="totalQuestions">100</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">正确题数</span>
+                <span class="detail-value" id="correctQuestions">0</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">错题数</span>
+                <span class="detail-value" id="wrongQuestions">0</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">正确率</span>
+                <span class="detail-value" id="accuracy">0%</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">用时</span>
+                <span class="detail-value" id="timeUsed">00:00</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">平均每题</span>
+                <span class="detail-value" id="avgTime">0秒</span>
+              </div>
+            </div>
+          </div>
+          <div class="result-actions">
+            <button class="btn btn-primary btn-lg btn-block" id="reviewAnswers">
+              <i class="fa fa-eye"></i> 查看答案解析
+            </button>
+            <button
+              class="btn btn-secondary btn-lg btn-block"
+              id="practiceWrong"
+            >
+              <i class="fa fa-repeat"></i> 练习错题
+            </button>
+            <button class="btn btn-outline btn-block" onclick="goHome()">
+              <i class="fa fa-home"></i> 返回主页
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 答案解析页面 -->
+      <div id="reviewPage" class="page">
+        <header class="page-header">
+          <button class="btn btn-back" onclick="goBack()">
+            <i class="fa fa-arrow-left"></i> 返回
+          </button>
+          <h2>答案解析</h2>
+        </header>
+        <div class="review-container" id="reviewContainer"></div>
+      </div>
+
+      <!-- 错题集页面 -->
+      <div id="wrongPage" class="page">
+        <header class="page-header">
+          <button class="btn btn-back" onclick="goBack()">
+            <i class="fa fa-arrow-left"></i> 返回
+          </button>
+          <h2>错题集</h2>
+          <button class="btn btn-sm btn-outline" id="practiceAllWrong">
+            练习全部
+          </button>
+        </header>
+        <div class="wrong-stats">
+          <div class="stat-item">
+            <span class="stat-value" id="totalWrong">0</span>
+            <span class="stat-label">总错题数</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-value" id="practiceCount">0</span>
+            <span class="stat-label">练习次数</span>
+          </div>
+        </div>
+        <div class="list-header-actions">
+          <button class="btn btn-sm btn-primary" id="toggleAllAnswers">
+            <i class="fa fa-eye"></i> 一键查看答案
+          </button>
+          <button
+            class="btn btn-sm btn-warning"
+            onclick="App.clearAllWrongQuestions()"
+          >
+            <i class="fa fa-trash"></i> 清空错题
+          </button>
+        </div>
+        <div class="wrong-list" id="wrongList"></div>
+      </div>
+
+      <!-- 收藏页面 -->
+      <div id="favoritePage" class="page">
+        <header class="page-header">
+          <button class="btn btn-back" onclick="goBack()">
+            <i class="fa fa-arrow-left"></i> 返回
+          </button>
+          <h2>收藏题库</h2>
+          <button class="btn btn-sm btn-primary" id="practiceAllFavorites">
+            练习全部
+          </button>
+        </header>
+        <div class="favorites-overview" id="favoritesOverview">
+          <div class="overview-stat">
+            <span class="overview-value" id="totalFavorites">0</span>
+            <span class="overview-label">收藏总数</span>
+          </div>
+          <div class="overview-stat">
+            <span class="overview-value" id="totalCategories">0</span>
+            <span class="overview-label">大类数量</span>
+          </div>
+          <div class="overview-stat">
+            <span class="overview-value" id="totalSubCategories">0</span>
+            <span class="overview-label">小类数量</span>
+          </div>
+        </div>
+        <div class="filter-section">
+          <div class="filter-group">
+            <label>按大类筛选：</label>
+            <div class="category-tabs" id="favoriteCategoryTabs">
+              <button class="cat-tab active" data-category="all">全部</button>
+            </div>
+          </div>
+          <div class="filter-group">
+            <label>按小类筛选：</label>
+            <div class="subcategory-tabs" id="favoriteSubCategoryTabs">
+              <button class="subcat-tab active" data-subcategory="all">
+                全部
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="list-header-actions">
+          <button class="btn btn-sm btn-primary" id="toggleAllFavoriteAnswers">
+            <i class="fa fa-eye"></i> 一键查看答案
+          </button>
+          <button
+            class="btn btn-sm btn-warning"
+            onclick="App.clearAllFavorites()"
+          >
+            <i class="fa fa-trash"></i> 清空收藏
+          </button>
+        </div>
+        <div class="favorite-list" id="favoriteList"></div>
+      </div>
+
+      <!-- 历史记录页面 -->
+      <div id="historyPage" class="page">
+        <header class="page-header">
+          <button class="btn btn-back" onclick="goBack()">
+            <i class="fa fa-arrow-left"></i> 返回
+          </button>
+          <h2>历史记录</h2>
+        </header>
+        <div class="list-header-actions">
+          <button
+            class="btn btn-sm btn-warning"
+            onclick="App.clearAllHistory()"
+          >
+            <i class="fa fa-trash"></i> 清空历史
+          </button>
+        </div>
+        <div class="history-list" id="historyList"></div>
+      </div>
+
+      <!-- 历史详情弹窗 -->
+      <div id="historyDetailModal" class="modal">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h3>本次概况</h3>
+            <button
+              class="modal-close"
+              onclick="closeModal('historyDetailModal')"
+            >
+              <i class="fa fa-times"></i>
+            </button>
+          </div>
+          <div class="modal-body" id="historyDetailContent"></div>
+          <div class="modal-footer">
+            <button
+              class="btn btn-outline"
+              onclick="closeModal('historyDetailModal')"
+            >
+              关闭
+            </button>
+            <button class="btn btn-primary" id="viewHistoryAnswers">
+              查看答案
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 管理端 -->
+      <div id="adminPage" class="page">
+        <header class="admin-header">
+          <div class="admin-title">
+            <img src="image/logo.png" alt="Logo" class="admin-logo" />
+            <h2>管理端</h2>
+          </div>
+          <div class="admin-actions">
+            <button
+              class="btn btn-outline btn-sm"
+              onclick="openTab('siteSettings')"
+            >
+              <i class="fa fa-globe"></i> 站点设置
+            </button>
+            <button
+              class="btn btn-outline btn-sm"
+              onclick="openTab('userManage')"
+            >
+              <i class="fa fa-users"></i> 用户管理
+            </button>
+            <button
+              class="btn btn-outline btn-sm"
+              onclick="openTab('questionBank')"
+            >
+              <i class="fa fa-database"></i> 题库管理
+            </button>
+            <button
+              class="btn btn-outline btn-sm"
+              onclick="openTab('activationCodes')"
+            >
+              <i class="fa fa-key"></i> 激活码
+            </button>
+            <button class="btn btn-danger btn-sm" onclick="logout()">
+              <i class="fa fa-sign-out"></i> 退出
+            </button>
+          </div>
+        </header>
+        <main class="admin-content">
+          <!-- 站点设置 -->
+          <div class="admin-tab" id="siteSettings">
+            <h3>站点设置</h3>
+            <div class="settings-form">
+              <div class="form-group">
+                <label>网站名称</label>
+                <input
+                  type="text"
+                  id="siteNameInput"
+                  value="水知晴体育国职模拟考试系统"
+                />
+              </div>
+              <div class="form-group">
+                <label>Logo图片</label>
+                <input type="file" id="logoUpload" accept="image/png" />
+                <img
+                  id="logoPreview"
+                  src="image/logo.png"
+                  alt="Logo预览"
+                  class="logo-preview"
+                />
+              </div>
+              <div class="form-group">
+                <label>国职考试资讯</label>
+                <textarea id="examInfoInput" rows="4">
+考试类型：国职游泳救生员（初级/中级/高级）
+考试时间：每月第二周周六
+考试地点：各省市体育职业鉴定站
+招聘岗位：救生员、游泳教练员</textarea
+                >
+              </div>
+              <div class="form-group">
+                <label>管理员密码</label>
+                <input
+                  type="password"
+                  id="adminPasswordInput"
+                  placeholder="留空则不修改"
+                />
+              </div>
+              <div class="form-group">
+                <label>错题集移出阈值（连续正确次数）</label>
+                <input
+                  type="number"
+                  id="wrongThreshold"
+                  value="3"
+                  min="1"
+                  max="10"
+                />
+              </div>
+              <button class="btn btn-primary" onclick="App.saveSettings()">
+                保存设置
+              </button>
+            </div>
+          </div>
+
+          <!-- 用户管理 -->
+          <div class="admin-tab" id="userManage" style="display: none">
+            <h3>用户管理</h3>
+            <div class="user-stats">
+              <div class="stat-card">
+                <span class="stat-number" id="totalUsers">0</span>
+                <span class="stat-text">总用户数</span>
+              </div>
+            </div>
+            <div class="user-table-container">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>手机号</th>
+                    <th>姓名</th>
+                    <th>刷题量</th>
+                    <th>正确率</th>
+                    <th>注册时间</th>
+                  </tr>
+                </thead>
+                <tbody id="userTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- 题库管理 -->
+          <div class="admin-tab" id="questionBank" style="display: none">
+            <h3>题库管理</h3>
+            <div class="question-bank-stats" id="questionBankStats">
+              <div class="stat-card">
+                <span class="stat-number" id="totalQuestions">0</span>
+                <span class="stat-text">总题数</span>
+              </div>
+              <div class="stat-card">
+                <span class="stat-number" id="judgmentCount">0</span>
+                <span class="stat-text">判断题</span>
+              </div>
+              <div class="stat-card">
+                <span class="stat-number" id="choiceCount">0</span>
+                <span class="stat-text">单选题</span>
+              </div>
+            </div>
+            <div class="import-section">
+              <div class="import-header">
+                <h4>导入题库</h4>
+                <div class="import-actions">
+                  <select id="importCategorySelect">
+                    <option value="国职游泳救生员初级">
+                      国职游泳救生员初级
+                    </option>
+                    <option value="国职游泳救生员中级">
+                      国职游泳救生员中级
+                    </option>
+                    <option value="国职游泳救生员高级">
+                      国职游泳救生员高级
+                    </option>
+                    <option value="国职游泳指导员初级">
+                      国职游泳指导员初级
+                    </option>
+                    <option value="国职游泳指导员中级">
+                      国职游泳指导员中级
+                    </option>
+                    <option value="国职游泳指导员高级">
+                      国职游泳指导员高级
+                    </option>
+                  </select>
+                  <input
+                    type="file"
+                    id="csvFileInput"
+                    accept=".csv"
+                    style="display: none"
+                  />
+                  <button
+                    class="btn btn-primary"
+                    onclick="document.getElementById('csvFileInput').click()"
+                  >
+                    <i class="fa fa-upload"></i> 选择CSV文件
+                  </button>
+                  <button
+                    class="btn btn-outline"
+                    onclick="App.downloadTemplate()"
+                  >
+                    <i class="fa fa-download"></i> 下载模板
+                  </button>
+                </div>
+              </div>
+              <div class="import-hint">
+                <i class="fa fa-info-circle"></i>
+                <span
+                  >提示：Excel保存为CSV时选择"CSV(逗号分隔)"格式，编码选择GBK或UTF-8</span
+                >
+              </div>
+            </div>
+            <div class="category-stats-container" id="categoryStatsContainer">
+              <h4>各大类题数统计</h4>
+              <div class="category-stats-grid" id="categoryStatsGrid"></div>
+            </div>
+            <div class="question-bank-toolbar">
+              <div class="toolbar-left">
+                <span class="filter-label">查看类别：</span>
+                <div class="filter-buttons" id="categoryFilterButtons">
+                  <button
+                    class="filter-btn active"
+                    data-category="all"
+                    onclick="App.filterQuestionBank('all')"
+                  >
+                    全部
+                  </button>
+                  <button
+                    class="filter-btn"
+                    data-category="国职游泳救生员初级"
+                    onclick="App.filterQuestionBank('国职游泳救生员初级')"
+                  >
+                    国职游泳救生员初级
+                  </button>
+                  <button
+                    class="filter-btn"
+                    data-category="国职游泳救生员中级"
+                    onclick="App.filterQuestionBank('国职游泳救生员中级')"
+                  >
+                    国职游泳救生员中级
+                  </button>
+                  <button
+                    class="filter-btn"
+                    data-category="国职游泳救生员高级"
+                    onclick="App.filterQuestionBank('国职游泳救生员高级')"
+                  >
+                    国职游泳救生员高级
+                  </button>
+                  <button
+                    class="filter-btn"
+                    data-category="国职游泳指导员初级"
+                    onclick="App.filterQuestionBank('国职游泳指导员初级')"
+                  >
+                    国职游泳指导员初级
+                  </button>
+                  <button
+                    class="filter-btn"
+                    data-category="国职游泳指导员中级"
+                    onclick="App.filterQuestionBank('国职游泳指导员中级')"
+                  >
+                    国职游泳指导员中级
+                  </button>
+                  <button
+                    class="filter-btn"
+                    data-category="国职游泳指导员高级"
+                    onclick="App.filterQuestionBank('国职游泳指导员高级')"
+                  >
+                    国职游泳指导员高级
+                  </button>
+                </div>
+              </div>
+              <div class="toolbar-right">
+                <button class="btn btn-sm btn-outline" id="selectAllQuestions">
+                  <i class="fa fa-check-square"></i> 全选
+                </button>
+                <button class="btn btn-sm btn-danger" id="batchDeleteQuestions">
+                  <i class="fa fa-trash"></i> 删除选中
+                </button>
+                <button
+                  class="btn btn-sm btn-danger"
+                  id="clearCategoryQuestions"
+                >
+                  <i class="fa fa-eraser"></i> 清空当前类别
+                </button>
+                <button class="btn btn-sm btn-danger" id="clearAllQuestions">
+                  <i class="fa fa-exclamation-triangle"></i> 清空全部
+                </button>
+              </div>
+            </div>
+            <div class="question-list" id="questionList"></div>
+          </div>
+
+          <!-- 激活码管理 -->
+          <div class="admin-tab" id="activationCodes" style="display: none">
+            <h3>激活码管理</h3>
+            <div class="activation-stats">
+              <div class="stat-card">
+                <span class="stat-number" id="totalCodes">0</span>
+                <span class="stat-text">总激活码</span>
+              </div>
+              <div class="stat-card">
+                <span class="stat-number" id="usedCodes">0</span>
+                <span class="stat-text">已使用</span>
+              </div>
+              <div class="stat-card">
+                <span class="stat-number" id="unusedCodes">0</span>
+                <span class="stat-text">未使用</span>
+              </div>
+            </div>
+            <div class="activation-form">
+              <h4 class="form-title">
+                <i class="fa fa-plus-circle"></i> 生成激活码
+              </h4>
+              <div class="form-row">
+                <div class="form-group">
+                  <label>生成数量</label>
+                  <input
+                    type="number"
+                    id="generateCount"
+                    value="10"
+                    min="1"
+                    max="100"
+                  />
+                </div>
+                <div class="form-group">
+                  <label>有效期（天）</label>
+                  <input type="number" id="validityDays" value="30" min="1" />
+                </div>
+                <div class="form-group">
+                  <label>使用次数</label>
+                  <input type="number" id="maxUses" value="1" min="1" />
+                  <small>填0表示不限次数</small>
+                </div>
+              </div>
+              <button class="btn btn-primary" onclick="App.generateCodes()">
+                <i class="fa fa-plus"></i> 生成激活码
+              </button>
+            </div>
+            <div class="code-list-section">
+              <h4 class="section-title">
+                <i class="fa fa-list"></i> 激活码列表
+              </h4>
+              <div class="code-actions">
+                <button
+                  class="btn btn-sm btn-outline"
+                  onclick="App.selectAllCodes()"
+                >
+                  全选
+                </button>
+                <button
+                  class="btn btn-sm btn-danger"
+                  onclick="App.deleteSelectedCodes()"
+                >
+                  <i class="fa fa-trash"></i> 删除选中
+                </button>
+                <button
+                  class="btn btn-sm btn-warning"
+                  onclick="App.clearAllCodes()"
+                >
+                  <i class="fa fa-trash-o"></i> 一键清空
+                </button>
+              </div>
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>
+                      <input
+                        type="checkbox"
+                        id="selectAllCodes"
+                        onchange="App.toggleSelectAllCodes()"
+                      />
+                    </th>
+                    <th>激活码</th>
+                    <th>状态</th>
+                    <th>使用次数</th>
+                    <th>有效期</th>
+                    <th>生成时间</th>
+                  </tr>
+                </thead>
+                <tbody id="codeTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </main>
+      </div>
+
+      <!-- 提交确认弹窗 -->
+      <div id="submitModal" class="modal">
+        <div class="modal-content modal-sm">
+          <div class="modal-header">
+            <h3>确认提交</h3>
+          </div>
+          <div class="modal-body">
+            <p>确定要交卷吗？</p>
+            <p class="text-muted">
+              已答: <span id="answeredForSubmit">0</span> 题
+            </p>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-outline" onclick="closeModal('submitModal')">
+              返回答题
+            </button>
+            <button class="btn btn-primary" onclick="App.confirmSubmit()">
+              确认交卷
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 退出确认弹窗 -->
+      <div id="exitModal" class="modal">
+        <div class="modal-content modal-sm">
+          <div class="modal-header">
+            <h3>确认退出</h3>
+          </div>
+          <div class="modal-body">
+            <p>确定要退出本次答题吗？</p>
+            <p class="text-muted">可以选择"保存进度"下次继续</p>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-outline" onclick="closeModal('exitModal')">
+              返回答题
+            </button>
+            <button class="btn btn-danger" onclick="App.exitAndSave()">
+              退出并保存
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 添加题目弹窗 -->
+      <div id="addQuestionModal" class="modal">
+        <div class="modal-content modal-lg">
+          <div class="modal-header">
+            <h3>手动添加题目</h3>
+            <button
+              class="modal-close"
+              onclick="closeModal('addQuestionModal')"
+            >
+              <i class="fa fa-times"></i>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <label>题型</label>
+              <select id="addQuestionType">
+                <option value="判断题">判断题</option>
+                <option value="单选题">单选题</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>题型分类</label>
+              <input
+                type="text"
+                id="addQuestionCategory"
+                placeholder="如：基础常识、技能知识等"
+              />
+            </div>
+            <div class="form-group">
+              <label>题干</label>
+              <textarea id="addQuestionText" rows="3"></textarea>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>选项A</label>
+                <input type="text" id="addOptionA" />
+              </div>
+              <div class="form-group">
+                <label>选项B</label>
+                <input type="text" id="addOptionB" />
+              </div>
+            </div>
+            <div class="form-row" id="addOptionRow" style="display: none">
+              <div class="form-group">
+                <label>选项C</label>
+                <input type="text" id="addOptionC" />
+              </div>
+              <div class="form-group">
+                <label>选项D</label>
+                <input type="text" id="addOptionD" />
+              </div>
+            </div>
+            <div class="form-group">
+              <label>正确答案</label>
+              <select id="addCorrectAnswer">
+                <option value="A">A</option>
+                <option value="B">B</option>
+                <option value="C">C</option>
+                <option value="D">D</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>解析</label>
+              <textarea id="addAnalysis" rows="3"></textarea>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button
+              class="btn btn-outline"
+              onclick="closeModal('addQuestionModal')"
+            >
+              取消
+            </button>
+            <button class="btn btn-primary" onclick="App.saveNewQuestion()">
+              保存
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 编辑题目弹窗 -->
+      <div id="editQuestionModal" class="modal">
+        <div class="modal-content modal-lg">
+          <div class="modal-header">
+            <h3>编辑题目</h3>
+            <button
+              class="modal-close"
+              onclick="closeModal('editQuestionModal')"
+            >
+              <i class="fa fa-times"></i>
+            </button>
+          </div>
+          <div class="modal-body">
+            <input type="hidden" id="editQuestionId" />
+            <div class="form-row">
+              <div class="form-group">
+                <label>题型</label>
+                <select
+                  id="editQuestionType"
+                  onchange="App.updateEditOptionRow()"
+                >
+                  <option value="判断题">判断题</option>
+                  <option value="单选题">单选题</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>题型分类</label>
+                <select id="editQuestionCategory">
+                  <option value="国职游泳救生员初级">国职游泳救生员初级</option>
+                  <option value="国职游泳救生员中级">国职游泳救生员中级</option>
+                  <option value="国职游泳救生员高级">国职游泳救生员高级</option>
+                  <option value="国职游泳指导员初级">国职游泳指导员初级</option>
+                  <option value="国职游泳指导员中级">国职游泳指导员中级</option>
+                  <option value="国职游泳指导员高级">国职游泳指导员高级</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>题干</label>
+              <textarea id="editQuestionText" rows="3"></textarea>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>选项A</label>
+                <input type="text" id="editOptionA" />
+              </div>
+              <div class="form-group">
+                <label>选项B</label>
+                <input type="text" id="editOptionB" />
+              </div>
+            </div>
+            <div class="form-row" id="editOptionRow" style="display: none">
+              <div class="form-group">
+                <label>选项C</label>
+                <input type="text" id="editOptionC" />
+              </div>
+              <div class="form-group">
+                <label>选项D</label>
+                <input type="text" id="editOptionD" />
+              </div>
+            </div>
+            <div class="form-group">
+              <label>正确答案</label>
+              <select id="editCorrectAnswer">
+                <option value="A">A</option>
+                <option value="B">B</option>
+                <option value="C">C</option>
+                <option value="D">D</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>解析</label>
+              <textarea id="editAnalysis" rows="3"></textarea>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button
+              class="btn btn-outline"
+              onclick="closeModal('editQuestionModal')"
+            >
+              取消
+            </button>
+            <button class="btn btn-primary" onclick="App.saveEditedQuestion()">
+              保存修改
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 导入预览弹窗 -->
+      <div id="importPreviewModal" class="modal">
+        <div class="modal-content modal-lg">
+          <div class="modal-header">
+            <h3>导入预览</h3>
+            <button
+              class="modal-close"
+              onclick="closeModal('importPreviewModal')"
+            >
+              <i class="fa fa-times"></i>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div class="import-preview-stats">
+              <div class="stat-item">
+                <span class="stat-label">文件名称</span>
+                <span class="stat-value" id="previewFileName">-</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-label">目标类别</span>
+                <span class="stat-value" id="previewTargetCategory">-</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-label">总行数</span>
+                <span class="stat-value" id="previewTotalRows">-</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-label">有效题目</span>
+                <span class="stat-value" id="previewValidCount">-</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-label">跳过行数</span>
+                <span class="stat-value" id="previewSkipCount">-</span>
+              </div>
+            </div>
+            <div class="import-preview-table-container">
+              <table class="import-preview-table">
+                <thead>
+                  <tr>
+                    <th>序号</th>
+                    <th>题型</th>
+                    <th>大类</th>
+                    <th>小类</th>
+                    <th>题干</th>
+                    <th>答案</th>
+                  </tr>
+                </thead>
+                <tbody id="importPreviewBody"></tbody>
+              </table>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button
+              class="btn btn-outline"
+              onclick="closeModal('importPreviewModal')"
+            >
+              取消
+            </button>
+            <button class="btn btn-primary" onclick="App.confirmImport()">
+              <i class="fa fa-check"></i> 确认导入
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 确认弹窗 -->
+      <div id="confirmModal" class="modal">
+        <div class="modal-content modal-sm">
+          <div class="modal-header">
+            <h3 id="confirmTitle">确认操作</h3>
+            <button class="modal-close" onclick="closeModal('confirmModal')">
+              <i class="fa fa-times"></i>
+            </button>
+          </div>
+          <div class="modal-body">
+            <p id="confirmMessage">确定要执行此操作吗？</p>
+          </div>
+          <div class="modal-footer">
+            <button
+              class="btn btn-outline"
+              onclick="closeModal('confirmModal')"
+            >
+              取消
+            </button>
+            <button class="btn btn-danger" id="confirmOkBtn">确认</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Toast提示 -->
+      <div id="toast" class="toast"></div>
+    </div>
+
+    <script src="js/data.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/leancloud-storage@4.13.1/dist/av-min.js"></script>
+    <script src="js/config.js"></script>
+    <script src="js/cloudStorage.js"></script>
+    <script src="js/storage.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/app.js"></script>
+  </body>
+</html>
